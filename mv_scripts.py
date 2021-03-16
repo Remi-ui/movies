@@ -1,4 +1,5 @@
 import sys
+import re
 
 def check_input(argv):
 
@@ -19,11 +20,29 @@ def check_input(argv):
             please give only one text file as an argument to this program")
         exit(-1)
 
+def filter_character(line):
+	
+	''' Filters on all character names in the script '''
+	if re.match(r'([\040]{26})([^\s])', line):
+		# Add here anything that'd need to happen with the character names
+		pass
+
+def filter_scene_boundary(line):
+	
+	''' Filter all scene descriptions in the script '''
+	if re.match(r'([\040]{5})([^\s])([A-Z \d\W]+$)', line):
+		#
+		# Does not perform perfectly yet, also catches scene descriptions with just capitals on a line
+		#
+		pass
+
 def main(argv):
 	fname = check_input(argv)
 	infile = open(fname, 'r')
-	data = infile.read()
-	print(data)
+	data = infile.readlines()
+	for line in data:
+		filter_character(line)
+		filter_scene_boundary(line)
 
 
 # Making the main conditional 
