@@ -2,6 +2,16 @@ import sys
 from itertools import groupby
 
 
+def remove_markup(new_element):
+    '''
+    Removes HTML5 subtitle markup language from elements.
+    '''
+    if new_element[:3] == '<i>' and new_element[-4:] == '</i>':
+        return new_element[3:-4]
+    else:
+        return new_element
+
+
 def open_subs(subtitle_file):
     """This function creates a list containing sublists, that each contain
     three elements: the number, the timestamp and the text."""
@@ -15,8 +25,8 @@ def open_subs(subtitle_file):
         for sublist in subtitle_list:
             item = []
             for element in sublist:
-                new_element = element.rstrip()
-                item.append(new_element)
+                element = remove_markup(element.rstrip())
+                item.append(element)
             subtitles.append(item)
     return subtitles
 
