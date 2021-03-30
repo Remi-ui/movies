@@ -29,7 +29,7 @@ def filter_scene_boundary(line):
     '''
     Filter all scene boudaries in the script
     '''
-    if re.match(r'([\040\n]{5})([^\s])([A-Z \d\W]+$)', line):
+    if re.match(r'([\040\n]{5})(INT\.|EXT\.)([A-Z \d\W]+$)', line):
         return line
 
 
@@ -40,7 +40,7 @@ def filter_scene_description(line):
     if re.match(r'(^ {5})([A-z]+)( |\')([a-z]+)', line):
         return line
 
-def filter_meta_data(full_dia):
+def filter_meta_data_dialogue(full_dia):
     '''
     Filters all meta data from the dialogue and returns a list of meta data
     '''
@@ -49,6 +49,9 @@ def filter_meta_data(full_dia):
         dialogue = re.sub(r'(\(.*?\))', r'(M) \1', full_dia)
         return dialogue 
 
+def filter_meta_data(line):
+    if re.match(r'([\040\n]{5})([^\s])([A-Z \d\W]+$)', line):
+        return line
 
 def label_data(data_list):
     labeled_data = []
@@ -58,8 +61,8 @@ def label_data(data_list):
             item = filter_character_dialogue(item)
             if len(item) == 2:
                 labeled_data.append("(C) " + item[0])
-                if filter_meta_data(item[1]) != None:
-                    dia = filter_meta_data(item[1])
+                if filter_meta_data_dialogue(item[1]) != None:
+                    dia = filter_meta_data_dialogue(item[1])
                     labeled_data.append("(D) " + dia)
                 else:
                     labeled_data.append("(D) " + item[1])
@@ -67,7 +70,8 @@ def label_data(data_list):
             labeled_data.append("(S) " + item)
         elif filter_scene_description(item) != None:
             labeled_data.append("(N) " + item)
-    print(labeled_data)
+        elif filter_meta_data(item) != None:
+            labeled_data.append("(M) " + item)
     return labeled_data
 
 
