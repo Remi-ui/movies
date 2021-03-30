@@ -50,6 +50,9 @@ def filter_meta_data_dialogue(full_dia):
         return dialogue 
 
 def filter_meta_data(line):
+    ''' 
+    Filters all metadata that isn't in the dialogue
+    '''
     if re.match(r'([\040\n]{5})([^\s])([A-Z \d\W]+$)', line):
         return line
 
