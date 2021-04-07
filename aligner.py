@@ -46,12 +46,16 @@ def select_dialogue(subtitle_list, script_list):
         best_match_script = ""
         i += 1
         element = element[2]
-        
-        for y in range(10):
-            if jellyfish.jaro_winkler_similarity(element, script_list[i + y]) > best_match:
-                best_match = jellyfish.jaro_winkler_similarity(element, script_list[i + y])
-                best_match_script = script_list[i + y]
-                # print(element, script_list[i + y], jellyfish.jaro_winkler_similarity(element, script_list[i + y]))
+        for y in range(5):
+            if i - 4 >= 0 and len(script_list) - 1 >= i:
+                if jellyfish.jaro_winkler_similarity(element, script_list[i - y]) > best_match:
+                    best_match = jellyfish.jaro_winkler_similarity(element, script_list[i - y])
+                    best_match_script = script_list[i - y]
+            elif i + 4 <= len(script_list):
+                if jellyfish.jaro_winkler_similarity(element, script_list[i + y]) > best_match:
+                    best_match = jellyfish.jaro_winkler_similarity(element, script_list[i + y])
+                    best_match_script = script_list[i + y]
+
         print("Subtitle: ", element, "Script: " ,best_match_script)
 
 
