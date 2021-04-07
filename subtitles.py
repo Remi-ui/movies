@@ -4,7 +4,7 @@ from itertools import groupby
 
 def clean_item(item):
     '''
-    Combines sublists with multiline dialogue into a single item.
+    Combines multiline sublists into one and removes HTML5 markup language.
     '''
     if len(item) == 4:
         item[2] = item[2] + " " + item[3]
