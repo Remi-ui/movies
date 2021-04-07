@@ -12,15 +12,23 @@ def remove_markup(new_element):
         return new_element
 
 
+def combine_multiline(subtitle_list):
+    '''
+    Combines sublists with multiline dialogue into a single item.
+    '''
+    for sublist in subtitle_list:
+        if len(sublist) == 4:
+            sublist[2] = sublist[2] + " " + sublist[3]
+            sublist.pop()
+    return subtitle_list
+
+
 def open_subs(subtitle_file):
     """This function creates a list containing sublists, that each contain
     three elements: the number, the timestamp and the text."""
     with open(subtitle_file, "r", encoding="ISO-8859-1") as f:
-        # creates a list with sublists, each containing number, timestamp and
-        # text
         subtitle_list = [list(g) for b, g in groupby(f, lambda x:
                                                      bool(x.strip())) if b]
-        # creates a new list, with the newline characters removed
         subtitles = []
         for sublist in subtitle_list:
             item = []
@@ -32,7 +40,8 @@ def open_subs(subtitle_file):
 
 
 def main(subtitle_file):
-    return open_subs(subtitle_file)
+    subtitle_list = open_subs(subtitle_file)
+    return combine_multiline(subtitle_list)
 
 
 if __name__ == "__main__":
