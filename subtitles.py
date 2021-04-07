@@ -2,25 +2,16 @@ import sys
 from itertools import groupby
 
 
-def remove_markup(new_element):
-    '''
-    Removes HTML5 subtitle markup language from elements.
-    '''
-    if new_element[:3] == '<i>' and new_element[-4:] == '</i>':
-        return new_element[3:-4]
-    else:
-        return new_element
-
-
-def combine_multiline(subtitle_list):
+def clean_item(item):
     '''
     Combines sublists with multiline dialogue into a single item.
     '''
-    for sublist in subtitle_list:
-        if len(sublist) == 4:
-            sublist[2] = sublist[2] + " " + sublist[3]
-            sublist.pop()
-    return subtitle_list
+    if len(item) == 4:
+        item[2] = item[2] + " " + item[3]
+        item.pop()
+    elif item[2][:3] == '<i>' and item[2][-4:] == '</i>':
+        item[2] = item[2][3:-4]
+    return item
 
 
 def open_subs(subtitle_file):
@@ -33,15 +24,16 @@ def open_subs(subtitle_file):
         for sublist in subtitle_list:
             item = []
             for element in sublist:
-                element = remove_markup(element.rstrip())
+                element = element.rstrip()
                 item.append(element)
+            item = clean_item(item)
             subtitles.append(item)
     return subtitles
 
 
 def main(subtitle_file):
-    subtitle_list = open_subs(subtitle_file)
-    return combine_multiline(subtitle_list)
+    print(open_subs(subtitle_file))
+    return open_subs(subtitle_file)
 
 
 if __name__ == "__main__":
