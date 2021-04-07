@@ -13,9 +13,11 @@ def remove_markup(new_element):
 
 
 def open_subs(subtitle_file):
-    """This function creates a list containing sublists, that each contain
-    three elements: the number, the timestamp and the text."""
-    with open(subtitle_file, "r", encoding="ISO-8859-1") as f:
+    '''
+    This function creates a list containing sublists, that each contain
+    three elements: the number, the timestamp and the text.
+    '''
+    with open(subtitle_file, 'r', encoding='ISO-8859-1') as f:
         # creates a list with sublists, each containing number, timestamp and
         # text
         subtitle_list = [list(g) for b, g in groupby(f, lambda x:
@@ -35,5 +37,5 @@ def main(subtitle_file):
     return open_subs(subtitle_file)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main(subtitle_file)
