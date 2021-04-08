@@ -79,16 +79,15 @@ def select_dialogue(subtitle_list, script_list):
     
     # print(len(subtitle_list))
     # print(len(script_list))
-    print(len(subtitle_list), len(script_list))
     for element in subtitle_list:
         i += 1
         el_list = element
         # clean HTML 5 markup
         element = subtitles.clean_item(element)
         element = element[2]
-        if best_match > 0.9:
-            script_list = script_list[script_list.index(best_match_script):]
-            subtitle_list = subtitle_list[subtitle_list.index(el_list):]
+        if best_match > 0.9 and len(subtitle_list) > 1:
+            script_list = script_list[script_list.index(best_match_script) + 1:]
+            subtitle_list = subtitle_list[subtitle_list.index(el_list) + 1:]
             i = 0
             best_match, best_match_script = default_search_match(element, script_list, i, len(script_list) / len(subtitle_list))
         else: 
