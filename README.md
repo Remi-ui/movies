@@ -6,6 +6,7 @@ For a more detailed explanation about the code, you can look at the comments in 
 
 Preparing to run the program:
 Prior to running the program, a few things have to be prepared. First, two files have to be prepared: a SubRip Subtitle file (.srt) containing the subtitles and a standard text file (.txt) containing the script. After this, it is useful to put the files in the same directory, as this will make it easier to call the program.
+In order to run the program, you also need a few libraries installed. All the required libraries are in requirements.txt. These can be installed in your terminal by typing: 'pip3 install [LIBRARY]'.
 
 How to run the program:
 1. Make sure you have done everything to prepare. (having a .srt and .txt file ready)
