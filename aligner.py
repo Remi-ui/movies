@@ -4,6 +4,8 @@ import re
 import subtitles
 import scripts
 import jellyfish
+import nltk
+from nltk.tokenize import sent_tokenize
 
 
 def check_input(argv):
@@ -27,36 +29,68 @@ def clean_script_dialogue(script_list):
     script_dialogue = []
     for element in script_list:
         if element[1] == "D":
+            # remove metadata
             element = re.sub(r'(\(M\)\s\(.*?\))', r'', element)
-            script_dialogue.append(element[4:])
+            element = element[4:]
+            # there are more than 2 sentences, break them up (easier to stringmatch with this)
+
+            if len(sent_tokenize(element)) > 2:
+                splitted_element = (sent_tokenize(element))
+                for element in splitted_element:
+                    if len(splitted_element) > 2:
+                        element = element + " " + splitted_element[1]
+                        script_dialogue.append(element)
+                        splitted_element = splitted_element[2:]
+                    else:
+                        script_dialogue.append(element)
+            script_dialogue.append(element)
     return script_dialogue
 
+def default_search_match(element, script_list, i):
+    best_match = 0
+    best_match_script = ""
+    for y in range(15):
+        if i - y >= 0:
+            # print(y, "score: ", jellyfish.jaro_winkler_similarity(element, script_list[i - y]), "subtitle: ", element, "script: " ,script_list[i - y])
+            if jellyfish.jaro_winkler_similarity(element, script_list[i - y]) > best_match:
+                best_match = jellyfish.jaro_winkler_similarity(element, script_list[i - y])
+                best_match_script = script_list[i - y]
+        if i + y < len(script_list):
+            # print(y,"score: ", jellyfish.jaro_winkler_similarity(element, script_list[i + y]), "subtitle: ", element, "script: " ,script_list[i + y])
+            if jellyfish.jaro_winkler_similarity(element, script_list[i + y]) > best_match:
+                best_match = jellyfish.jaro_winkler_similarity(element, script_list[i + y])
+                best_match_script = script_list[i + y]
+    return best_match, best_match_script
 
 def select_dialogue(subtitle_list, script_list):
     """
     Selects the dialogue from the script and the
     subtitles and puts each in their own list
     """
-    subtitle_dialogue = []
+    best_match = 0
+    best_match_script = ""
     i = -1
     # Iterate over the script and subtitles, select only dialogue and
     # append them to a list
+    
+    # print(len(subtitle_list))
+    # print(len(script_list))
+    print(len(subtitle_list), len(script_list))
     for element in subtitle_list:
-        best_match = 0
-        best_match_script = ""
         i += 1
+        el_list = element
+        # clean HTML 5 markup
+        element = subtitles.clean_item(element)
         element = element[2]
-        for y in range(5):
-            if i - 4 >= 0 and len(script_list) - 1 >= i:
-                if jellyfish.jaro_winkler_similarity(element, script_list[i - y]) > best_match:
-                    best_match = jellyfish.jaro_winkler_similarity(element, script_list[i - y])
-                    best_match_script = script_list[i - y]
-            elif i + 4 <= len(script_list):
-                if jellyfish.jaro_winkler_similarity(element, script_list[i + y]) > best_match:
-                    best_match = jellyfish.jaro_winkler_similarity(element, script_list[i + y])
-                    best_match_script = script_list[i + y]
-
-        print("Subtitle: ", element, "Script: " ,best_match_script)
+        if best_match > 0.9:
+            script_list = script_list[script_list.index(best_match_script):]
+            subtitle_list = subtitle_list[subtitle_list.index(el_list):]
+            i = 0
+            best_match, best_match_script = default_search_match(element, script_list, i)
+        else: 
+            best_match, best_match_script = default_search_match(element, script_list, i)
+        
+        print("Score: ", best_match,"Subtitle: ", element, "Script: " ,best_match_script)
 
 
 
