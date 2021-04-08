@@ -77,7 +77,6 @@ def label_data(data_list):
             labeled_data.append("(M) " + item)
     return labeled_data
 
-
 def main(script_file):
     with open(script_file, "r") as infile: 
         data = infile.read()
