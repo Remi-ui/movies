@@ -9,7 +9,7 @@ def clean_item(item):
     if len(item) == 4:
         item[2] = item[2] + " " + item[3]
         item.pop()
-    elif item[2][:3] == '<i>' and item[2][-4:] == '</i>':
+    if item[2][:3] == '<i>' and item[2][-4:] == '</i>':
         item[2] = item[2][3:-4]
     return item
 
@@ -34,7 +34,6 @@ def open_subs(subtitle_file):
 
 
 def main(subtitle_file):
-    print(open_subs(subtitle_file))
     return open_subs(subtitle_file)
 
 
