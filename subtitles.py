@@ -15,8 +15,10 @@ def clean_item(item):
 
 
 def open_subs(subtitle_file):
-    """This function creates a list containing sublists, that each contain
-    three elements: the number, the timestamp and the text."""
+    '''
+    This function creates a list containing sublists, that each contain
+    three elements: the number, the timestamp and the text.
+    '''
     with open(subtitle_file, "r", encoding="ISO-8859-1") as f:
         subtitle_list = [list(g) for b, g in groupby(f, lambda x:
                                                      bool(x.strip())) if b]
