@@ -6,6 +6,9 @@ import jellyfish
 import nltk
 from nltk.tokenize import sent_tokenize
 
+from fuzzy_match import match
+from fuzzy_match import algorithims
+
 
 def check_input(argv):
     '''
@@ -50,20 +53,33 @@ def default_search_match(element, script_list, i, ratio):
     best_match_script = ""
     # Have the range in which the subtitle will search for a match be dependent on the ratio 
     # between the length of the list of the script and the length of the subtitle list
-    ratio = 15 * ratio
-    if int(ratio) < 15:
-        ratio = 15
+    ratio = 20 * ratio
+    if int(ratio) < 20:
+        ratio = 20
     for y in range(int(ratio)):
         if i - y >= 0:
-            # print(y, "score: ", jellyfish.jaro_winkler_similarity(element, script_list[i - y]), "subtitle: ", element, "script: " ,script_list[i - y])
-            if jellyfish.jaro_winkler_similarity(element, script_list[i - y]) > best_match:
-                best_match = jellyfish.jaro_winkler_similarity(element, script_list[i - y])
+            #print(y, "score: ", algorithims.cosine(element, script_list[i - y]), "subtitle: ", element, "script: " ,script_list[i - y])
+            if algorithims.cosine(element, script_list[i - y]) > best_match:
+                best_match = algorithims.cosine(element, script_list[i - y])
                 best_match_script = script_list[i - y]
         if i + y < len(script_list):
-            # print(y,"score: ", jellyfish.jaro_winkler_similarity(element, script_list[i + y]), "subtitle: ", element, "script: " ,script_list[i + y])
-            if jellyfish.jaro_winkler_similarity(element, script_list[i + y]) > best_match:
-                best_match = jellyfish.jaro_winkler_similarity(element, script_list[i + y])
+            #print(y,"score: ", algorithims.cosine(element, script_list[i + y]), "subtitle: ", element, "script: " ,script_list[i + y])
+            if algorithims.cosine(element, script_list[i + y]) > best_match:
+                best_match = algorithims.cosine(element, script_list[i + y])
                 best_match_script = script_list[i + y]
+    
+    if best_match < 0.35:
+        for a in range(15):
+            if i - a >= 0:
+                #print(a, "score: ", jellyfish.jaro_winkler_similarity(element, script_list[i - a]), "subtitle: ", element, "script: " ,script_list[i - a])
+                if jellyfish.jaro_winkler_similarity(element, script_list[i - a]) > best_match:
+                    best_match = jellyfish.jaro_winkler_similarity(element, script_list[i - a])
+                    best_match_script = script_list[i - a]
+            if i + a < len(script_list):
+                #print(a,"score: ", jellyfish.jaro_winkler_similarity(element, script_list[i + a]), "subtitle: ", element, "script: " ,script_list[i + a])
+                if jellyfish.jaro_winkler_similarity(element, script_list[i + a]) > best_match:
+                    best_match = jellyfish.jaro_winkler_similarity(element, script_list[i + a])
+                    best_match_script = script_list[i + a]
     return best_match, best_match_script
 
 def select_dialogue(subtitle_list, script_list):
@@ -86,8 +102,8 @@ def select_dialogue(subtitle_list, script_list):
         element = subtitles.clean_item(element)
         element = element[2]
         if best_match > 0.9 and len(subtitle_list) > 1:
-            script_list = script_list[script_list.index(best_match_script) + 1:]
-            subtitle_list = subtitle_list[subtitle_list.index(el_list) + 1:]
+            script_list = script_list[script_list.index(best_match_script):]
+            subtitle_list = subtitle_list[subtitle_list.index(el_list):]
             i = 0
             best_match, best_match_script = default_search_match(element, script_list, i, len(script_list) / len(subtitle_list))
         else: 
