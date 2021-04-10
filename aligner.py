@@ -5,6 +5,7 @@ import scripts
 import jellyfish
 import nltk
 from nltk.tokenize import sent_tokenize
+nltk.download('averaged_perceptron_tagger')
 
 from fuzzy_match import match
 from fuzzy_match import algorithims
@@ -96,6 +97,7 @@ def select_dialogue(subtitle_list, script_list):
     """
     best_match = 0
     best_match_script = ""
+    results = []
     i = -1
     # Iterate over the script and subtitles, select only dialogue and
     # append them to a list
@@ -115,9 +117,21 @@ def select_dialogue(subtitle_list, script_list):
             best_match, best_match_script = default_search_match(element, script_list, i, len(script_list) / len(subtitle_list))
         else:
             best_match, best_match_script = default_search_match(element, script_list, i, len(script_list) / len(subtitle_list))
+        
+        results.append([element, best_match_script])
+    return results
+        # print("Score: ", best_match, "Subtitle: ", element, "Script: " ,best_match_script)
 
-        print("Score: ", best_match, "Subtitle: ", element, "Script: " ,best_match_script)
-
+def character_dialogue(subtitle_list, script_list):
+    ''' This functions adds the character name to the subtitles based on the script '''
+    sub_script = select_dialogue(subtitle_list, clean_script_dialogue(script_list))
+    for match in sub_script:
+        sub = match[0]
+        script = match[1]
+        indices = [i for i, s in enumerate(script_list) if script in s]
+        for i in indices:
+            print(script_list[i - 1])
+            print(sub)
 
 def count_pos(text):
     '''
@@ -143,10 +157,11 @@ def find_differences(subtitle_list, script_list):
         script_dialogue += re.sub(' +', ' ', item + ' ')
 
     # Prints various similarity scores between the enitire text
-    print('Fuzz ratio:', fuzz.ratio(subtitle_dialogue, script_dialogue))
-    print('Jellyfish similarity: {:.2}'.format(jellyfish.jaro_winkler_similarity(subtitle_dialogue, script_dialogue)))
-    print('Cosine similarity: {:.2}'.format(algorithims.cosine(subtitle_dialogue, script_dialogue)))
-    print('Word count subtitles: {0} Word count script: {1}'.format(len(subtitle_dialogue), len(script_dialogue)))
+    
+    #print('Fuzz ratio:', fuzz.ratio(subtitle_dialogue, script_dialogue))
+    #print('Jellyfish similarity: {:.2}'.format(jellyfish.jaro_winkler_similarity(subtitle_dialogue, script_dialogue)))
+    #print('Cosine similarity: {:.2}'.format(algorithims.cosine(subtitle_dialogue, script_dialogue)))
+    #print('Word count subtitles: {0} Word count script: {1}'.format(len(subtitle_dialogue), len(script_dialogue)))
 
     # Creates dictionaries with POS for subtitles and script
     # Format: {'POS': count}
@@ -171,7 +186,7 @@ def find_differences(subtitle_list, script_list):
     scr_count['prepos'] = scr_pos['IN']
     scr_count['conj'] = scr_pos['CC']
 
-    print(sub_count, '\n', scr_count)
+    #print(sub_count, '\n', scr_count)
 
 
 def main(argv):
@@ -181,7 +196,7 @@ def main(argv):
     script_list = scripts.main(sys.argv[2])
     select_dialogue(subtitle_list, clean_script_dialogue(script_list))
     find_differences(subtitle_list, script_list)
-
+    character_dialogue(subtitle_list, script_list)
 
 if __name__ == "__main__":
     main(sys.argv)
