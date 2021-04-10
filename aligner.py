@@ -8,6 +8,8 @@ from nltk.tokenize import sent_tokenize
 
 from fuzzy_match import match
 from fuzzy_match import algorithims
+from fuzzywuzzy import fuzz
+from collections import Counter
 
 
 def check_input(argv):
@@ -27,6 +29,7 @@ def check_input(argv):
               "please provide a .srt and .txt file.")
         exit(-1)
 
+
 def clean_script_dialogue(script_list):
     script_dialogue = []
     for element in script_list:
@@ -34,7 +37,8 @@ def clean_script_dialogue(script_list):
             # remove metadata
             element = re.sub(r'(\(M\)\s\(.*?\))', r'', element)
             element = element[4:]
-            # there are more than 2 sentences, break them up (easier to stringmatch with this)
+            # there are more than 2 sentences, break them up
+            # (easier to stringmatch with this)
 
             if len(sent_tokenize(element)) > 2:
                 splitted_element = (sent_tokenize(element))
@@ -48,11 +52,13 @@ def clean_script_dialogue(script_list):
             script_dialogue.append(element)
     return script_dialogue
 
+
 def default_search_match(element, script_list, i, ratio):
     best_match = 0
     best_match_script = ""
-    # Have the range in which the subtitle will search for a match be dependent on the ratio 
-    # between the length of the list of the script and the length of the subtitle list
+    # Have the range in which the subtitle will search for a match be
+    # dependent on the ratio between the length of the list of the script
+    # and the length of the subtitle list
     ratio = 20 * ratio
     if int(ratio) < 20:
         ratio = 20
@@ -67,7 +73,7 @@ def default_search_match(element, script_list, i, ratio):
             if algorithims.cosine(element, script_list[i + y]) > best_match:
                 best_match = algorithims.cosine(element, script_list[i + y])
                 best_match_script = script_list[i + y]
-    
+
     if best_match < 0.35:
         for a in range(15):
             if i - a >= 0:
@@ -82,6 +88,7 @@ def default_search_match(element, script_list, i, ratio):
                     best_match_script = script_list[i + a]
     return best_match, best_match_script
 
+
 def select_dialogue(subtitle_list, script_list):
     """
     Selects the dialogue from the script and the
@@ -92,7 +99,7 @@ def select_dialogue(subtitle_list, script_list):
     i = -1
     # Iterate over the script and subtitles, select only dialogue and
     # append them to a list
-    
+
     # print(len(subtitle_list))
     # print(len(script_list))
     for element in subtitle_list:
@@ -106,11 +113,65 @@ def select_dialogue(subtitle_list, script_list):
             subtitle_list = subtitle_list[subtitle_list.index(el_list):]
             i = 0
             best_match, best_match_script = default_search_match(element, script_list, i, len(script_list) / len(subtitle_list))
-        else: 
+        else:
             best_match, best_match_script = default_search_match(element, script_list, i, len(script_list) / len(subtitle_list))
-        
-        print("Score: ", best_match,"Subtitle: ", element, "Script: " ,best_match_script)
 
+        print("Score: ", best_match, "Subtitle: ", element, "Script: " ,best_match_script)
+
+
+def count_pos(text):
+    '''
+    This function takes a string and counts each part of speech in the string.
+    The output is in the form of a dictionary (pos: count).
+    '''
+    tokens = nltk.word_tokenize(text.lower())
+    tagged = nltk.pos_tag(tokens)
+    pos_count = Counter(tag for word, tag in tagged)
+    return pos_count
+
+
+def find_differences(subtitle_list, script_list):
+    subtitle_dialogue = ''
+    script_dialogue = ''
+
+    # Creates a single string with all the text for both the subtitles
+    # and the script
+    for item in subtitle_list:
+        subtitle_dialogue += re.sub(' +', ' ', item[2] + ' ')
+    script_dia_list = clean_script_dialogue(script_list)
+    for item in script_dia_list:
+        script_dialogue += re.sub(' +', ' ', item + ' ')
+
+    # Prints various similarity scores between the enitire text
+    print('Fuzz ratio:', fuzz.ratio(subtitle_dialogue, script_dialogue))
+    print('Jellyfish similarity: {:.2}'.format(jellyfish.jaro_winkler_similarity(subtitle_dialogue, script_dialogue)))
+    print('Cosine similarity: {:.2}'.format(algorithims.cosine(subtitle_dialogue, script_dialogue)))
+    print('Word count subtitles: {0} Word count script: {1}'.format(len(subtitle_dialogue), len(script_dialogue)))
+
+    # Creates dictionaries with POS for subtitles and script
+    # Format: {'POS': count}
+    # Keys: 'noun', 'pronoun', 'adj', 'verb', 'adverb', 'prepos', 'conj
+    sub_pos = count_pos(subtitle_dialogue)
+    sub_count = {}
+    sub_count['noun'] = sub_pos['NN'] + sub_pos['NNS']
+    sub_count['pronoun'] = sub_pos['PRP'] + sub_pos['PRP$']
+    sub_count['adj'] = sub_pos['JJ'] + sub_pos['JJR'] + sub_pos['JJS']
+    sub_count['verb'] = sub_pos['VB'] + sub_pos['VBG'] + sub_pos['VBD'] + sub_pos['VBN'] + sub_pos['VBP'] + sub_pos['VBZ']
+    sub_count['adverb'] = sub_pos['RB'] + sub_pos['RBR'] + sub_pos['RBS']
+    sub_count['prepos'] = sub_pos['IN']
+    sub_count['conj'] = sub_pos['CC']
+
+    scr_pos = count_pos(script_dialogue)
+    scr_count = {}
+    scr_count['noun'] = scr_pos['NN'] + scr_pos['NNS']
+    scr_count['pronoun'] = scr_pos['PRP'] + scr_pos['PRP$']
+    scr_count['adj'] = scr_pos['JJ'] + scr_pos['JJR'] + scr_pos['JJS']
+    scr_count['verb'] = scr_pos['VB'] + scr_pos['VBG'] + scr_pos['VBD'] + scr_pos['VBN'] + scr_pos['VBP'] + scr_pos['VBZ']
+    scr_count['adverb'] = scr_pos['RB'] + scr_pos['RBR'] + scr_pos['RBS']
+    scr_count['prepos'] = scr_pos['IN']
+    scr_count['conj'] = scr_pos['CC']
+
+    print(sub_count, '\n', scr_count)
 
 
 def main(argv):
@@ -119,6 +180,7 @@ def main(argv):
     subtitle_list = subtitles.main(sys.argv[1])
     script_list = scripts.main(sys.argv[2])
     select_dialogue(subtitle_list, clean_script_dialogue(script_list))
+    find_differences(subtitle_list, script_list)
 
 
 if __name__ == "__main__":
