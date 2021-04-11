@@ -5,7 +5,7 @@ import scripts
 import jellyfish
 import nltk
 from nltk.tokenize import sent_tokenize
-nltk.download('averaged_perceptron_tagger')
+#nltk.download('averaged_perceptron_tagger')
 
 from fuzzy_match import match
 from fuzzy_match import algorithims
@@ -30,9 +30,25 @@ def check_input(argv):
               "please provide a .srt and .txt file.")
         exit(-1)
 
+def run_interface():
+    # Can later use this as command interface.
+    parser = argparse.ArgumentParser(prog="Aligner",
+                                     description="This program aligns a movie script and its subtitles.",
+                                     usage="Provide a .txt and a .srt file to align the two.")
+    parser.add_argument("-script", "--Script file", required=True, type=str, metavar="",
+                        help="Provide a .txt file that contains a movie script.")
+    parser.add_argument("-sub", "--Subtitle file", required=True, type=str, metavar="",
+                        help="Provide a .str file that contains the subtitles to the movie.")
+    args = parser.parse_args()
+    argv = vars(args)
+    subtitle_list = subtitles.main(argv['Subtitle file'])
+    script_list = scripts.main(argv['Script file'])
+    return argv
+
 
 def clean_script_dialogue(script_list):
     script_dialogue = []
+    index = 0
     for element in script_list:
         if element[1] == "D":
             # remove metadata
@@ -46,11 +62,12 @@ def clean_script_dialogue(script_list):
                 for element in splitted_element:
                     if len(splitted_element) > 2:
                         element = element + " " + splitted_element[1]
-                        script_dialogue.append(element)
+                        script_dialogue.append([element, index])
                         splitted_element = splitted_element[2:]
                     else:
-                        script_dialogue.append(element)
-            script_dialogue.append(element)
+                        script_dialogue.append([element, index])
+            script_dialogue.append([element, index])
+        index += 1
     return script_dialogue
 
 
@@ -118,20 +135,22 @@ def select_dialogue(subtitle_list, script_list):
         else:
             best_match, best_match_script = default_search_match(element, script_list, i, len(script_list) / len(subtitle_list))
         
-        results.append([element, best_match_script])
+        results.append([best_match, element, best_match_script])
     return results
         # print("Score: ", best_match, "Subtitle: ", element, "Script: " ,best_match_script)
 
-def character_dialogue(subtitle_list, script_list):
+def character_dialogue(subtitle_list, script_list, cleaned_script_norm):
     ''' This functions adds the character name to the subtitles based on the script '''
-    sub_script = select_dialogue(subtitle_list, clean_script_dialogue(script_list))
+    
+    sub_script = select_dialogue(subtitle_list, cleaned_script_norm)
     for match in sub_script:
         sub = match[0]
         script = match[1]
         indices = [i for i, s in enumerate(script_list) if script in s]
         for i in indices:
-            print(script_list[i - 1])
-            print(sub)
+            #print(script_list[i - 1])
+            #print(sub)
+            pass
 
 def count_pos(text):
     '''
@@ -144,7 +163,7 @@ def count_pos(text):
     return pos_count
 
 
-def find_differences(subtitle_list, script_list):
+def find_differences(subtitle_list, script_list, cleaned_script_norm):
     subtitle_dialogue = ''
     script_dialogue = ''
 
@@ -152,7 +171,7 @@ def find_differences(subtitle_list, script_list):
     # and the script
     for item in subtitle_list:
         subtitle_dialogue += re.sub(' +', ' ', item[2] + ' ')
-    script_dia_list = clean_script_dialogue(script_list)
+    script_dia_list = cleaned_script_norm
     for item in script_dia_list:
         script_dialogue += re.sub(' +', ' ', item + ' ')
 
@@ -189,14 +208,36 @@ def find_differences(subtitle_list, script_list):
     #print(sub_count, '\n', scr_count)
 
 
+def align_timestamp(cleaned_script, aligned_data, script_list, subtitle_list):
+    # Places a timestamp in the script.
+    i = 0
+    for element in aligned_data:
+        for element2 in cleaned_script:
+            #print(element2)
+            if element2[0] == element[2]:
+                aligned_data[i].append(element2[1])
+        i += 1
+    for element in aligned_data:    
+        script_list[element[3]] += "(T) " + str(subtitle_list[0][1])
+        subtitle_list.pop(0)
+    return script_list
+
+
 def main(argv):
     # Execute scripts.py en subtitles.py vanaf hier.
     check_input(argv)
     subtitle_list = subtitles.main(sys.argv[1])
     script_list = scripts.main(sys.argv[2])
-    select_dialogue(subtitle_list, clean_script_dialogue(script_list))
-    find_differences(subtitle_list, script_list)
-    character_dialogue(subtitle_list, script_list)
+    cleaned_script = clean_script_dialogue(script_list)
+
+    cleaned_script_norm = []
+    for item in cleaned_script:
+        cleaned_script_norm.append(item[0])
+    
+    aligned_data = select_dialogue(subtitle_list, cleaned_script_norm)
+    find_differences(subtitle_list, script_list, cleaned_script_norm)
+    character_dialogue(subtitle_list, script_list, cleaned_script_norm)
+    timestamped_script = align_timestamp(cleaned_script, aligned_data, script_list, subtitle_list)
 
 if __name__ == "__main__":
     main(sys.argv)
