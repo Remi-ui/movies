@@ -47,6 +47,9 @@ def run_interface():
 
 
 def clean_script_dialogue(script_list):
+    ''' This function cleans up the list containing everything from the scripts
+    to then return only the dialogue and the index of that dialogue '''
+    
     script_dialogue = []
     index = 0
     for element in script_list:
@@ -72,6 +75,9 @@ def clean_script_dialogue(script_list):
 
 
 def default_search_match(element, script_list, i, ratio):
+    ''' This function searches for a match between the subtitle and script using NLTK by default
+    and the Jaro Winkler similarity if NLTK gives a low score'''
+
     best_match = 0
     best_match_script = ""
     # Have the range in which the subtitle will search for a match be
@@ -136,21 +142,19 @@ def select_dialogue(subtitle_list, script_list):
             best_match, best_match_script = default_search_match(element, script_list, i, len(script_list) / len(subtitle_list))
         
         results.append([best_match, element, best_match_script])
+        #print("Score: ", best_match, "Subtitle: ", element, "Script: " ,best_match_script)
     return results
-        # print("Score: ", best_match, "Subtitle: ", element, "Script: " ,best_match_script)
 
 def character_dialogue(subtitle_list, script_list, cleaned_script_norm):
     ''' This functions adds the character name to the subtitles based on the script '''
-    
     sub_script = select_dialogue(subtitle_list, cleaned_script_norm)
     for match in sub_script:
-        sub = match[0]
-        script = match[1]
+        sub = match[1]
+        script = match[2]
         indices = [i for i, s in enumerate(script_list) if script in s]
         for i in indices:
-            #print(script_list[i - 1])
-            #print(sub)
-            pass
+            print(script_list[i - 1][4:])
+            print(sub)         
 
 def count_pos(text):
     '''
@@ -164,6 +168,7 @@ def count_pos(text):
 
 
 def find_differences(subtitle_list, script_list, cleaned_script_norm):
+    ''' This function finds differences between the scripts and subtitles using POS tags '''
     subtitle_dialogue = ''
     script_dialogue = ''
 
@@ -209,7 +214,7 @@ def find_differences(subtitle_list, script_list, cleaned_script_norm):
 
 
 def align_timestamp(cleaned_script, aligned_data, script_list, subtitle_list):
-    # Places a timestamp in the script.
+    '''This function places a timestamp in the script.'''
     i = 0
     for element in aligned_data:
         for element2 in cleaned_script:
