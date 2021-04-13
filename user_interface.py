@@ -27,7 +27,7 @@ def ask_choice():
                    "1. Create a .csv file with the timestamps of the subtitles in the script.\n"
                    "2. Create a .csv file with the character names in the subtitles.\n"
                    "3. Create a .csv file with the labeled script.\n"
-                   "4. Provide an overal match of the alignment between script and subtitles.\n"
+                   "4. Calculate an overal match of the alignment between script and subtitles.\n"
                    "5. Find lexical differences between the script and subtitles.\n"
                    "6. Execute all options at once.\n\n"
                    "Please provide the number of your choice:\n"))
