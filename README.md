@@ -36,7 +36,6 @@ If you'd like to reproduce these results follow these steps:
 <li>Run the program as normally using the script and subtitle (provided in the scripts_subtitles folder) for the desired movie</li>
 <li>Compare as you wish! These raw results will be exactly the same as the ones we used for the annotation as well as the raw results below</li>
 </ol>
- using the script and subtitle in the scripts_subtitles folder
 
 Raw results: https://docs.google.com/spreadsheets/d/1vUpw906vSVXqh4vc2DsbTovbaMD9jZwdd3C7rRKSZC8/edit#gid=0
 
