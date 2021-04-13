@@ -210,6 +210,7 @@ def find_differences(subtitle_list, cleaned_script_norm):
     # Keys: 'noun', 'pronoun', 'adj', 'verb', 'adverb', 'prepos', 'conj
     sub_pos = count_pos(subtitle_dialogue)
     sub_count = {}
+    sub_count['wc'] = len(subtitle_dialogue)
     sub_count['noun'] = sub_pos['NN'] + sub_pos['NNS']
     sub_count['pronoun'] = sub_pos['PRP'] + sub_pos['PRP$']
     sub_count['adj'] = sub_pos['JJ'] + sub_pos['JJR'] + sub_pos['JJS']
@@ -221,6 +222,7 @@ def find_differences(subtitle_list, cleaned_script_norm):
 
     scr_pos = count_pos(script_dialogue)
     scr_count = {}
+    scr_count['wc'] = len(script_dialogue)
     scr_count['noun'] = scr_pos['NN'] + scr_pos['NNS']
     scr_count['pronoun'] = scr_pos['PRP'] + scr_pos['PRP$']
     scr_count['adj'] = scr_pos['JJ'] + scr_pos['JJR'] + scr_pos['JJS']
@@ -229,9 +231,10 @@ def find_differences(subtitle_list, cleaned_script_norm):
     scr_count['adverb'] = scr_pos['RB'] + scr_pos['RBR'] + scr_pos['RBS']
     scr_count['prepos'] = scr_pos['IN']
     scr_count['conj'] = scr_pos['CC']
+    # print(sub_count, '\n', scr_count)
 
     return sub_count, scr_count
-    # print(sub_count, '\n', scr_count)
+
 
 
 def align_timestamp(cleaned_script, aligned_data, script_list, subtitle_list):
