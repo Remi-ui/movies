@@ -5,6 +5,9 @@
 
 import sys
 import re
+import csv
+import json
+
 import subtitles
 import scripts
 import jellyfish
@@ -150,17 +153,20 @@ def select_dialogue(subtitle_list, script_list):
         #print("Score: ", best_match, "Subtitle: ", element, "Script: " ,best_match_script)
     return results
 
-def character_dialogue(subtitle_list, script_list, cleaned_script_norm):
+
+def character_dialogue(subtitle_list, script_list, cleaned_script_norm, aligned_data):
     ''' This functions adds the character name to the subtitles based on the script '''
-    sub_script = select_dialogue(subtitle_list, cleaned_script_norm)
-    for match in sub_script:
+    character_dialogue = []
+    for match in aligned_data:
         sub = match[1]
         script = match[2]
         indices = [i for i, s in enumerate(script_list) if script in s]
         for i in indices:
-            print(script_list[i - 1][4:])
-            print(sub)         
+            character_dialogue.append(script_list[i - 1][4:])
+            character_dialogue.append(sub)
+    return character_dialogue
 
+            
 def count_pos(text):
     '''
     This function takes a string and counts each part of speech in the string.
@@ -215,6 +221,7 @@ def find_differences(subtitle_list, script_list, cleaned_script_norm):
     scr_count['prepos'] = scr_pos['IN']
     scr_count['conj'] = scr_pos['CC']
 
+    return sub_count, scr_count
     #print(sub_count, '\n', scr_count)
 
 
@@ -230,6 +237,7 @@ def align_timestamp(cleaned_script, aligned_data, script_list, subtitle_list):
     for element in aligned_data:    
         script_list[element[3]] += "(T) " + str(subtitle_list[0][1])
         subtitle_list.pop(0)
+    #print(script_list)
     return script_list
 
 
@@ -246,8 +254,10 @@ def main(argv):
     
     aligned_data = select_dialogue(subtitle_list, cleaned_script_norm)
     find_differences(subtitle_list, script_list, cleaned_script_norm)
-    character_dialogue(subtitle_list, script_list, cleaned_script_norm)
+    character_dialogue(subtitle_list, script_list, cleaned_script_norm, aligned_data)
+
     timestamped_script = align_timestamp(cleaned_script, aligned_data, script_list, subtitle_list)
+    
 
 if __name__ == "__main__":
     main(sys.argv)
