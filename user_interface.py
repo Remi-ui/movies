@@ -1,3 +1,7 @@
+# File name: Aligner.py
+# Authors: Kylian de Rooij, Robert van Timmeren, Remi Thüss
+# Description: A user interface for a movie script and subtitle aligner
+
 import sys
 import argparse
 import csv
