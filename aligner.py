@@ -1,7 +1,6 @@
 # File name: Aligner.py
 # Authors: Kylian de Rooij, Robert van Timmeren, Remi Thüss
-# Description: A program that'll align movie scripts with subtitles and provides
-# an interface to merge them in different ways.
+# Description: A program that'll align movie scripts with subtitles
 
 import sys
 import re
@@ -13,7 +12,6 @@ import scripts
 import jellyfish
 import nltk
 from nltk.tokenize import sent_tokenize
-#nltk.download('averaged_perceptron_tagger')
 
 from fuzzy_match import match
 from fuzzy_match import algorithims
@@ -38,15 +36,22 @@ def check_input(argv):
               "please provide a .srt and .txt file.")
         exit(-1)
 
+
 def run_interface():
     # Can later use this as command interface.
     parser = argparse.ArgumentParser(prog="Aligner",
-                                     description="This program aligns a movie script and its subtitles.",
-                                     usage="Provide a .txt and a .srt file to align the two.")
-    parser.add_argument("-script", "--Script file", required=True, type=str, metavar="",
-                        help="Provide a .txt file that contains a movie script.")
-    parser.add_argument("-sub", "--Subtitle file", required=True, type=str, metavar="",
-                        help="Provide a .str file that contains the subtitles to the movie.")
+                                     description="This program aligns \
+                                     a movie script and its subtitles.",
+                                     usage="Provide a .txt \
+                                     and a .srt file to align the two.")
+    parser.add_argument("-script", "--Script file",
+                        required=True, type=str, metavar="",
+                        help="Provide a .txt file \
+                        that contains a movie script.")
+    parser.add_argument("-sub", "--Subtitle file",
+                        required=True, type=str, metavar="",
+                        help="Provide a .str file that contains \
+                        the subtitles to the movie.")
     args = parser.parse_args()
     argv = vars(args)
     subtitle_list = subtitles.main(argv['Subtitle file'])
@@ -57,7 +62,7 @@ def run_interface():
 def clean_script_dialogue(script_list):
     ''' This function cleans up the list containing everything from the scripts
     to then return only the dialogue and the index of that dialogue '''
-    
+
     script_dialogue = []
     index = 0
     for element in script_list:
@@ -82,6 +87,20 @@ def clean_script_dialogue(script_list):
     return script_dialogue
 
 
+def alternative_search(element, script_list, best_match, best_match_script, i):
+    ''' This function using Jaro Winkler similarity will be used if NLTK doesn't find a sufficiently good match.
+    Overall this improves accuracy. '''
+    for a in range(15):
+        if i - a >= 0:
+            if jellyfish.jaro_winkler_similarity(element, script_list[i - a]) > best_match:
+                best_match = jellyfish.jaro_winkler_similarity(element, script_list[i - a])
+                best_match_script = script_list[i - a]
+        if i + a < len(script_list):
+            if jellyfish.jaro_winkler_similarity(element, script_list[i + a]) > best_match:
+                best_match = jellyfish.jaro_winkler_similarity(element, script_list[i + a])
+                best_match_script = script_list[i + a]
+    return best_match, best_match_script
+
 def default_search_match(element, script_list, i, ratio):
     ''' This function searches for a match between the subtitle and script using NLTK by default
     and the Jaro Winkler similarity if NLTK gives a low score'''
@@ -96,28 +115,17 @@ def default_search_match(element, script_list, i, ratio):
         ratio = 20
     for y in range(int(ratio)):
         if i - y >= 0:
-            #print(y, "score: ", algorithims.cosine(element, script_list[i - y]), "subtitle: ", element, "script: " ,script_list[i - y])
             if algorithims.cosine(element, script_list[i - y]) > best_match:
                 best_match = algorithims.cosine(element, script_list[i - y])
                 best_match_script = script_list[i - y]
         if i + y < len(script_list):
-            #print(y,"score: ", algorithims.cosine(element, script_list[i + y]), "subtitle: ", element, "script: " ,script_list[i + y])
             if algorithims.cosine(element, script_list[i + y]) > best_match:
                 best_match = algorithims.cosine(element, script_list[i + y])
                 best_match_script = script_list[i + y]
 
     if best_match < 0.35:
-        for a in range(15):
-            if i - a >= 0:
-                #print(a, "score: ", jellyfish.jaro_winkler_similarity(element, script_list[i - a]), "subtitle: ", element, "script: " ,script_list[i - a])
-                if jellyfish.jaro_winkler_similarity(element, script_list[i - a]) > best_match:
-                    best_match = jellyfish.jaro_winkler_similarity(element, script_list[i - a])
-                    best_match_script = script_list[i - a]
-            if i + a < len(script_list):
-                #print(a,"score: ", jellyfish.jaro_winkler_similarity(element, script_list[i + a]), "subtitle: ", element, "script: " ,script_list[i + a])
-                if jellyfish.jaro_winkler_similarity(element, script_list[i + a]) > best_match:
-                    best_match = jellyfish.jaro_winkler_similarity(element, script_list[i + a])
-                    best_match_script = script_list[i + a]
+        best_match, best_match_script = alternative_search(element, script_list, best_match, best_match_script, i)
+        
     return best_match, best_match_script
 
 
@@ -133,8 +141,6 @@ def select_dialogue(subtitle_list, script_list):
     # Iterate over the script and subtitles, select only dialogue and
     # append them to a list
 
-    # print(len(subtitle_list))
-    # print(len(script_list))
     for element in subtitle_list:
         i += 1
         el_list = element
@@ -150,7 +156,7 @@ def select_dialogue(subtitle_list, script_list):
             best_match, best_match_script = default_search_match(element, script_list, i, len(script_list) / len(subtitle_list))
         
         results.append([best_match, element, best_match_script])
-        #print("Score: ", best_match, "Subtitle: ", element, "Script: " ,best_match_script)
+        print("Score: ", best_match, "Subtitle: ", element, "Script: " ,best_match_script)
     return results
 
 

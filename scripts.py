@@ -1,6 +1,7 @@
 # File name: scripts.py
 # Authors: Kylian de Rooij, Robert van Timmeren, Remi Thüss
-# Description: A program that'll label movie scripts and returns the full labelled script.
+# Description: A program that'll label movie scripts 
+# and returns the full labelled script.
 
 import sys
 import re
