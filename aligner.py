@@ -155,7 +155,6 @@ def select_dialogue(subtitle_list, script_list):
         results.append([best_match, element, best_match_script])
         # print("Score: ", best_match, "Subtitle: ",
         #       element, "Script: ", best_match_script)
-        # print("Score: ", best_match, "Subtitle: ", element, "Script: " ,best_match_script)
     return results
 
 
