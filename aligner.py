@@ -1,3 +1,8 @@
+# File name: Aligner.py
+# Authors: Kylian de Rooij, Robert van Timmeren, Remi Thüss
+# Description: A program that'll align movie scripts with subtitles and provides
+# an interface to merge them in different ways.
+
 import sys
 import re
 import subtitles

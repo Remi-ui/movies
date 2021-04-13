@@ -1,3 +1,7 @@
+# File name: subtitles.py
+# Authors: Kylian de Rooij, Robert van Timmeren, Remi Thüss
+# Description: A program that'll split subtitles of movies into the timestamp and the dialogue
+
 import sys
 from itertools import groupby
 
