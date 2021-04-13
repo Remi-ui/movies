@@ -37,28 +37,6 @@ def check_input(argv):
         exit(-1)
 
 
-def run_interface():
-    # Can later use this as command interface.
-    parser = argparse.ArgumentParser(prog="Aligner",
-                                     description="This program aligns \
-                                     a movie script and its subtitles.",
-                                     usage="Provide a .txt \
-                                     and a .srt file to align the two.")
-    parser.add_argument("-script", "--Script file",
-                        required=True, type=str, metavar="",
-                        help="Provide a .txt file \
-                        that contains a movie script.")
-    parser.add_argument("-sub", "--Subtitle file",
-                        required=True, type=str, metavar="",
-                        help="Provide a .str file that contains \
-                        the subtitles to the movie.")
-    args = parser.parse_args()
-    argv = vars(args)
-    subtitle_list = subtitles.main(argv['Subtitle file'])
-    script_list = scripts.main(argv['Script file'])
-    return argv
-
-
 def clean_script_dialogue(script_list):
     ''' This function cleans up the list containing everything from the scripts
     to then return only the dialogue and the index of that dialogue '''
@@ -156,7 +134,7 @@ def select_dialogue(subtitle_list, script_list):
             best_match, best_match_script = default_search_match(element, script_list, i, len(script_list) / len(subtitle_list))
         
         results.append([best_match, element, best_match_script])
-        print("Score: ", best_match, "Subtitle: ", element, "Script: " ,best_match_script)
+        # print("Score: ", best_match, "Subtitle: ", element, "Script: " ,best_match_script)
     return results
 
 
