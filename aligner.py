@@ -178,7 +178,7 @@ def count_pos(text):
     return pos_count
 
 
-def find_differences(subtitle_list, script_list, cleaned_script_norm):
+def find_differences(subtitle_list, cleaned_script_norm):
     ''' This function finds differences between the scripts and subtitles using POS tags '''
     subtitle_dialogue = ''
     script_dialogue = ''
@@ -253,7 +253,7 @@ def main(argv):
         cleaned_script_norm.append(item[0])
     
     aligned_data = select_dialogue(subtitle_list, cleaned_script_norm)
-    find_differences(subtitle_list, script_list, cleaned_script_norm)
+    find_differences(subtitle_list, cleaned_script_norm)
     character_dialogue(subtitle_list, script_list, cleaned_script_norm, aligned_data)
 
     timestamped_script = align_timestamp(cleaned_script, aligned_data, script_list, subtitle_list)
