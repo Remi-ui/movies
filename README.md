@@ -28,6 +28,7 @@ Birthday girl: 31 correct, 69 incorrect
 Chinatown: 89 correct, 11 incorrect
 
 Total: 215 correct, 185 incorrect
+
 Accuracy based on results above: 53.75%
 
 Raw results: https://docs.google.com/spreadsheets/d/1vUpw906vSVXqh4vc2DsbTovbaMD9jZwdd3C7rRKSZC8/edit#gid=0
