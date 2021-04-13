@@ -88,21 +88,29 @@ def clean_script_dialogue(script_list):
 
 
 def alternative_search(element, script_list, best_match, best_match_script, i):
-    ''' This function using Jaro Winkler similarity will be used if NLTK doesn't find a sufficiently good match.
+    ''' This function using Jaro Winkler similarity
+    will be used if NLTK doesn't find a sufficiently good match.
     Overall this improves accuracy. '''
+    bm = best_match
     for a in range(15):
         if i - a >= 0:
-            if jellyfish.jaro_winkler_similarity(element, script_list[i - a]) > best_match:
-                best_match = jellyfish.jaro_winkler_similarity(element, script_list[i - a])
+            if jellyfish.jaro_winkler_similarity(element,
+               script_list[i - a]) > bm:
+                bm = jellyfish.jaro_winkler_similarity(element,
+                                                       script_list[i - a])
                 best_match_script = script_list[i - a]
         if i + a < len(script_list):
-            if jellyfish.jaro_winkler_similarity(element, script_list[i + a]) > best_match:
-                best_match = jellyfish.jaro_winkler_similarity(element, script_list[i + a])
+            if jellyfish.jaro_winkler_similarity(element,
+               script_list[i + a]) > bm:
+                bm = jellyfish.jaro_winkler_similarity(element,
+                                                       script_list[i + a])
                 best_match_script = script_list[i + a]
-    return best_match, best_match_script
+    return bm, best_match_script
+
 
 def default_search_match(element, script_list, i, ratio):
-    ''' This function searches for a match between the subtitle and script using NLTK by default
+    ''' This function searches for a match between
+    the subtitle and script using NLTK by default
     and the Jaro Winkler similarity if NLTK gives a low score'''
 
     best_match = 0
@@ -124,8 +132,12 @@ def default_search_match(element, script_list, i, ratio):
                 best_match_script = script_list[i + y]
 
     if best_match < 0.35:
-        best_match, best_match_script = alternative_search(element, script_list, best_match, best_match_script, i)
-        
+        best_match, best_match_script = alternative_search(element,
+                                                           script_list,
+                                                           best_match,
+                                                           best_match_script,
+                                                           i)
+
     return best_match, best_match_script
 
 
@@ -147,21 +159,31 @@ def select_dialogue(subtitle_list, script_list):
         # clean HTML 5 markup
         element = subtitles.clean_item(element)
         element = element[2]
+        ratio = len(script_list) / len(subtitle_list)
         if best_match > 0.9 and len(subtitle_list) > 1:
             script_list = script_list[script_list.index(best_match_script):]
             subtitle_list = subtitle_list[subtitle_list.index(el_list):]
             i = 0
-            best_match, best_match_script = default_search_match(element, script_list, i, len(script_list) / len(subtitle_list))
+            best_match, best_match_script = default_search_match(element,
+                                                                 script_list,
+                                                                 i,
+                                                                 ratio)
         else:
-            best_match, best_match_script = default_search_match(element, script_list, i, len(script_list) / len(subtitle_list))
-        
+            best_match, best_match_script = default_search_match(element,
+                                                                 script_list,
+                                                                 i,
+                                                                 ratio)
+
         results.append([best_match, element, best_match_script])
-        print("Score: ", best_match, "Subtitle: ", element, "Script: " ,best_match_script)
+        # print("Score: ", best_match, "Subtitle: ",
+        #       element, "Script: ", best_match_script)
     return results
 
 
-def character_dialogue(subtitle_list, script_list, cleaned_script_norm, aligned_data):
-    ''' This functions adds the character name to the subtitles based on the script '''
+def character_dialogue(subtitle_list, script_list,
+                       cleaned_script_norm, aligned_data):
+    ''' This functions adds the character name
+    to the subtitles based on the script '''
     character_dialogue = []
     for match in aligned_data:
         sub = match[1]
@@ -172,7 +194,7 @@ def character_dialogue(subtitle_list, script_list, cleaned_script_norm, aligned_
             character_dialogue.append(sub)
     return character_dialogue
 
-            
+
 def count_pos(text):
     '''
     This function takes a string and counts each part of speech in the string.
@@ -185,7 +207,8 @@ def count_pos(text):
 
 
 def find_differences(subtitle_list, cleaned_script_norm):
-    ''' This function finds differences between the scripts and subtitles using POS tags '''
+    ''' This function finds differences between
+    the scripts and subtitles using POS tags '''
     subtitle_dialogue = ''
     script_dialogue = ''
 
@@ -198,11 +221,11 @@ def find_differences(subtitle_list, cleaned_script_norm):
         script_dialogue += re.sub(' +', ' ', item + ' ')
 
     # Prints various similarity scores between the enitire text
-    
-    #print('Fuzz ratio:', fuzz.ratio(subtitle_dialogue, script_dialogue))
-    #print('Jellyfish similarity: {:.2}'.format(jellyfish.jaro_winkler_similarity(subtitle_dialogue, script_dialogue)))
-    #print('Cosine similarity: {:.2}'.format(algorithims.cosine(subtitle_dialogue, script_dialogue)))
-    #print('Word count subtitles: {0} Word count script: {1}'.format(len(subtitle_dialogue), len(script_dialogue)))
+
+    # print('Fuzz ratio:', fuzz.ratio(subtitle_dialogue, script_dialogue))
+    # print('Jellyfish similarity: {:.2}'.format(jellyfish.jaro_winkler_similarity(subtitle_dialogue, script_dialogue)))
+    # print('Cosine similarity: {:.2}'.format(algorithims.cosine(subtitle_dialogue, script_dialogue)))
+    # print('Word count subtitles: {0} Word count script: {1}'.format(len(subtitle_dialogue), len(script_dialogue)))
 
     # Creates dictionaries with POS for subtitles and script
     # Format: {'POS': count}
@@ -212,7 +235,8 @@ def find_differences(subtitle_list, cleaned_script_norm):
     sub_count['noun'] = sub_pos['NN'] + sub_pos['NNS']
     sub_count['pronoun'] = sub_pos['PRP'] + sub_pos['PRP$']
     sub_count['adj'] = sub_pos['JJ'] + sub_pos['JJR'] + sub_pos['JJS']
-    sub_count['verb'] = sub_pos['VB'] + sub_pos['VBG'] + sub_pos['VBD'] + sub_pos['VBN'] + sub_pos['VBP'] + sub_pos['VBZ']
+    sub_count['verb'] = sub_pos['VB'] + sub_pos['VBG'] + sub_pos['VBD'] +\
+        sub_pos['VBN'] + sub_pos['VBP'] + sub_pos['VBZ']
     sub_count['adverb'] = sub_pos['RB'] + sub_pos['RBR'] + sub_pos['RBS']
     sub_count['prepos'] = sub_pos['IN']
     sub_count['conj'] = sub_pos['CC']
@@ -222,13 +246,14 @@ def find_differences(subtitle_list, cleaned_script_norm):
     scr_count['noun'] = scr_pos['NN'] + scr_pos['NNS']
     scr_count['pronoun'] = scr_pos['PRP'] + scr_pos['PRP$']
     scr_count['adj'] = scr_pos['JJ'] + scr_pos['JJR'] + scr_pos['JJS']
-    scr_count['verb'] = scr_pos['VB'] + scr_pos['VBG'] + scr_pos['VBD'] + scr_pos['VBN'] + scr_pos['VBP'] + scr_pos['VBZ']
+    scr_count['verb'] = scr_pos['VB'] + scr_pos['VBG'] +\
+        scr_pos['VBD'] + scr_pos['VBN'] + scr_pos['VBP'] + scr_pos['VBZ']
     scr_count['adverb'] = scr_pos['RB'] + scr_pos['RBR'] + scr_pos['RBS']
     scr_count['prepos'] = scr_pos['IN']
     scr_count['conj'] = scr_pos['CC']
 
     return sub_count, scr_count
-    #print(sub_count, '\n', scr_count)
+    # print(sub_count, '\n', scr_count)
 
 
 def align_timestamp(cleaned_script, aligned_data, script_list, subtitle_list):
@@ -236,14 +261,14 @@ def align_timestamp(cleaned_script, aligned_data, script_list, subtitle_list):
     i = 0
     for element in aligned_data:
         for element2 in cleaned_script:
-            #print(element2)
+            # print(element2)
             if element2[0] == element[2]:
                 aligned_data[i].append(element2[1])
         i += 1
-    for element in aligned_data:    
+    for element in aligned_data:
         script_list[element[3]] += "(T) " + str(subtitle_list[0][1])
         subtitle_list.pop(0)
-    #print(script_list)
+    # print(script_list)
     return script_list
 
 
@@ -257,13 +282,17 @@ def main(argv):
     cleaned_script_norm = []
     for item in cleaned_script:
         cleaned_script_norm.append(item[0])
-    
+
     aligned_data = select_dialogue(subtitle_list, cleaned_script_norm)
     find_differences(subtitle_list, cleaned_script_norm)
-    character_dialogue(subtitle_list, script_list, cleaned_script_norm, aligned_data)
+    character_dialogue(subtitle_list,
+                       script_list, cleaned_script_norm,
+                       aligned_data)
 
-    timestamped_script = align_timestamp(cleaned_script, aligned_data, script_list, subtitle_list)
-    
+    timestamped_script = align_timestamp(cleaned_script,
+                                         aligned_data,
+                                         script_list, subtitle_list)
+
 
 if __name__ == "__main__":
     main(sys.argv)
