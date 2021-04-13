@@ -22,14 +22,21 @@ In order to run the program, you also need a few libraries installed. All the re
 To illustrate the performance of the program the first 100 matches of 4 movies were annotated by hand to check if the program found the right match.
 The results were:
 
-Mission impossible: 32 correct, 68 incorrect
-The assignment: 63 correct, 37 incorrect
-Birthday girl: 31 correct, 69 incorrect
-Chinatown: 89 correct, 11 incorrect
+- Mission impossible: 32 correct, 68 incorrect
+- The assignment: 63 correct, 37 incorrect
+- Birthday girl: 31 correct, 69 incorrect
+- Chinatown: 89 correct, 11 incorrect
 
 Total: 215 correct, 185 incorrect
-
 Accuracy based on results above: 53.75%
+
+If you'd like to reproduce these results follow these steps:
+<ol>
+<li>Open aligner.py and uncomment the last print statement in the select_dialogue function.</li>
+<li>Run the program as normally using the script and subtitle (provided in the scripts_subtitles folder) for the desired movie</li>
+<li>Compare as you wish! These raw results will be exactly the same as the ones we used for the annotation as well as the raw results below</li>
+</ol>
+ using the script and subtitle in the scripts_subtitles folder
 
 Raw results: https://docs.google.com/spreadsheets/d/1vUpw906vSVXqh4vc2DsbTovbaMD9jZwdd3C7rRKSZC8/edit#gid=0
 
