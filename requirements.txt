@@ -1,9 +1,36 @@
-Run the following commands in your Linux/Unix terminal prior to running the program:
-pip3 install jellyfish
-pip3 install nltk
-pip3 install fuzzy-match
-pip3 install fuzzywuzzy
-pip3 install python-Levenshtein
+# movies/aligner.py: 16,17
+# movies/aligner_BASE_1117.py: 16,17
+# movies/aligner_BASE_792.py: 16,17
+# movies/aligner_LOCAL_1117.py: 16,17
+# movies/aligner_LOCAL_792.py: 16,17
+# movies/aligner_REMOTE_1117.py: 16,17
+# movies/aligner_REMOTE_792.py: 16,17
+fuzzy_match == 0.0.1
 
-Open your interactive python shell by typing 'python3' and enter the following there:
-nltk.download('averaged_perceptron_tagger')
+# movies/aligner.py: 18
+# movies/aligner_BASE_1117.py: 18
+# movies/aligner_BASE_792.py: 18
+# movies/aligner_LOCAL_1117.py: 18
+# movies/aligner_LOCAL_792.py: 18
+# movies/aligner_REMOTE_1117.py: 18
+# movies/aligner_REMOTE_792.py: 18
+fuzzywuzzy == 0.18.0
+
+# movies/aligner.py: 12
+# movies/aligner_BASE_1117.py: 12
+# movies/aligner_BASE_792.py: 12
+# movies/aligner_LOCAL_1117.py: 12
+# movies/aligner_LOCAL_792.py: 12
+# movies/aligner_REMOTE_1117.py: 12
+# movies/aligner_REMOTE_792.py: 12
+# movies/string_comparison.py: 1
+jellyfish == 0.8.2
+
+# movies/aligner.py: 13,14
+# movies/aligner_BASE_1117.py: 13,14
+# movies/aligner_BASE_792.py: 13,14
+# movies/aligner_LOCAL_1117.py: 13,14
+# movies/aligner_LOCAL_792.py: 13,14
+# movies/aligner_REMOTE_1117.py: 13,14
+# movies/aligner_REMOTE_792.py: 13,14
+nltk == 3.6.1
