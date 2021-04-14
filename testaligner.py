@@ -13,8 +13,10 @@ for item in cleaned_script:
     cleaned_script_norm.append(item[0])
 aligned_data = aligner.select_dialogue(subtitle_list, cleaned_script_norm)
 pos_count = aligner.find_differences(subtitle_list, cleaned_script_norm)
-character_match = aligner.character_dialogue(subtitle_list, script_list, cleaned_script_norm, aligned_data)
-timestamped_script = aligner.align_timestamp(cleaned_script, aligned_data, script_list, subtitle_list)
+character_match = aligner.character_dialogue(subtitle_list, script_list,
+                                             cleaned_script_norm, aligned_data)
+timestamped_script = aligner.align_timestamp(cleaned_script, aligned_data,
+                                             script_list, subtitle_list)
 
 
 def test_subtitles_main():
@@ -141,6 +143,7 @@ def test_scripts_main():
     assert labeled_data[25-1] == '(C) KASIMOV'
     assert labeled_data[26-1] == '(D) You\'re the only one who can help me. '
 
+
 def test_clean_script_dialogue():
     # Format: [['dialogue line', index], [...]]
     test1 = ['(D) They\'ll kill me. ']
@@ -156,18 +159,13 @@ def test_clean_script_dialogue():
 def test_select_dialogue():
     # Format: [[match value, 'subtitle line', 'script line'], [...]]
     # first line in subtitles
-    assert aligned_data[0][1] == 'Come on, come on. She\'s been under too long.'
+    assert aligned_data[0][1] == 'Come on, come on. '\
+                                 'She\'s been under too long.'
     # first match
-    assert aligned_data[0][2] == 'Jesus, she\'s been under too long. Come on, come on! '
-    #first line in script
+    assert aligned_data[0][2] == 'Jesus, she\'s been under too long. '\
+                                 'Come on, come on! '
+    # first line in script
     assert aligned_data[0][2] != 'Kasimov, Kasimov, good that you called us.'
-
-
-#def test_default_search_match():
-#    test1 = 'Come on, come on. She\'s been under too long.'
-#    result1 = 'Jesus, she\'s been under too long. Come on, come on!'
-#    assert aligner.default_search_match(test1, script_list, 0, 1)[1] == result1
-
 
 
 def test_character_dialogue():
@@ -175,10 +173,11 @@ def test_character_dialogue():
     # first character in the script
     assert character_match[0] == 'JACK'
     # first subtitle line that matches with the first character's line
-    assert character_match[1] == 'Come on, come on. She\'s been under too long.'
+    assert character_match[1] == 'Come on, come on. '\
+                                 'She\'s been under too long.'
     # last character in the script
     assert character_match[-2] == 'FLIGHT ATTENDANT'
-    #last subtitle line that matches with the last character's line
+    # last subtitle line that matches with the last character's line
     assert character_match[-1] == 'Aruba, perhaps?'
 
 
@@ -187,14 +186,28 @@ def test_count_pos():
     test1 = 'This is a test sentence.'
     test2 = 'You\'re the only one who can help me.'
     result1 = {'DT': 2, 'NN': 2, 'VBZ': 1, '.': 1}
-    result2 = {'PRP': 2, 'VBP': 1, 'DT': 1, 'JJ': 1, 'NN': 1, 'WP': 1, 'MD': 1, 'VB': 1, '.': 1}
+    result2 = {'PRP': 2, 'VBP': 1, 'DT': 1, 'JJ': 1,
+               'NN': 1, 'WP': 1, 'MD': 1, 'VB': 1, '.': 1}
     assert aligner.count_pos(test1) == result1
 
 
 def test_find_differences():
     # Format: ({key:value}, {key:value})
-    assert pos_count == ({'noun': 1413, 'pronoun': 726, 'adj': 404, 'verb': 1382, 'adverb': 371, 'prepos': 530, 'conj': 107}, {'noun': 2028, 'pronoun': 992, 'adj': 674, 'verb': 2030, 'adverb': 530, 'prepos': 767, 'conj': 172})
+    assert pos_count == ({'wc': 31877, 'noun': 1413, 'pronoun': 726,
+                          'adj': 404, 'verb': 1382, 'adverb': 371,
+                          'prepos': 530, 'conj': 107},
+                         {'wc': 46043, 'noun': 2028, 'pronoun': 992,
+                          'adj': 674, 'verb': 2030, 'adverb': 530,
+                          'prepos': 767, 'conj': 172})
 
 
-#def test_align_timestamp():
-    #
+def test_align_timestamp():
+    # Format: '(D) Dialogue line (T) Timestamp' or
+    # '(TYPE) Line content'
+    test1 = '(D) Aruba, perhaps? (T) 01:45:49,435 --> 01:45:50,936'
+    test2 = '(D) Jesus, she\'s been under too long. '\
+            'Come on, come on! (T) 00:00:52,346 --> 00:00:55,099'
+    test3 = '(M) 16TH AUGUST 1995'
+    assert test1 in timestamped_script
+    assert test2 in timestamped_script
+    assert test3 in timestamped_script

@@ -11,12 +11,30 @@ For a more detailed explanation about the code, you can look at the comments in 
 
 <h2>Preparing to run the program</h2>
 Prior to running the program, a few things have to be prepared. First, two files have to be prepared: a SubRip Subtitle file (.srt) containing the subtitles and a standard text file (.txt) containing the script. After this, it is useful to put the files in the same directory, as this will make it easier to call the program.
-In order to run the program, you also need a few libraries installed. All the required libraries are in requirements.txt. These can be installed in your terminal by typing: 'pip3 install [LIBRARY]'.
+In order to run the program, you also need a few libraries installed. How to install these is described in the first step of how to run the program. If this doesn't work, you can type the following lines into your terminal:
+<ul>
+<li>pip3 install jellyfish</li>
+<li>pip3 install nltk</li>
+<li>pip3 install fuzzy-match</li>
+<li>pip3 install fuzzywuzzy</li>
+<li>pip3 install python-Levenshtein</li>
+</ul>
+You also need to install a part of nltk through Python, which you can do by using the interactive Python shell. Type 'python3' into your terminal. When the interactive shell has opened, type the following:
+<ul>
+  <li>import nltk</li>
+  <li>nltk.download('averaged_perceptron_tagger')</li>
+</ul>
 
 <h2>How to run the program</h2>
 <ol>
+<<<<<<< HEAD
 <li>Have a script file (.srt) and subtitle file (.txt) prepared in the main directory or move a script and corresponding subtitle file from the scripts_subtitles directory</li>
 <li>Run the program in the terminal by typing: python3 user_interface.py -script [SCRIPT_FILE].txt -sub [SUBTITLE_FILE].srt</li>
+=======
+<li>Run the requirements file by typing 'pip3 install -r requirements.txt' into your terminal</li>
+<li>Have a script file (.srt) and subtitle file (.txt) prepared or use the ones provided in the scripts_subtitles directory</li>
+<li>Run the program in the terminal by typing: python3 user_interface.py -script [SCRIPT_FILE].txt -sub [SUBTITLE_FILE].srt 'python3 aligner.py [SUBTITLE_FILE].srt [SCRIPT_FILE].txt </li>
+>>>>>>> 4a593925df721b7ab1352e5813351409461f47ec
 <li>Replace the square brackets and text within the square brackets with the desired name of the script and subtitle</li>
 <li>Follow the instructions provided by the program and put in the number of the desired output and press Enter</li>
 <li>The file with the output can be found in a .csv file in the output folder</li>

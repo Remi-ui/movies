@@ -47,11 +47,10 @@ def ask_choice():
                        "4. Provide an overal match of the alignment "
                        "between script and subtitles.\n"
                        "5. Find lexical differences between "
-                       "the script and subtitles.\n"
-                       "6. Execute all options at once.\n\n"
+                       "the script and subtitles.\n\n"
                        "Please provide the number of your choice:\n"))
-    if choice not in range(1, 7):
-        print("Please only provide a number between 1 and 6.")
+    if choice not in range(1, 6):
+        print("Please only provide a number between 1 and 5.")
         exit(-1)
     return choice
 

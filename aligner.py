@@ -10,8 +10,9 @@ import json
 import subtitles
 import scripts
 import jellyfish
-import nltk
 from nltk.tokenize import sent_tokenize
+from nltk.tokenize import word_tokenize
+from nltk import pos_tag
 
 from fuzzy_match import match
 from fuzzy_match import algorithims
@@ -165,8 +166,8 @@ def count_pos(text):
     This function takes a string and counts each part of speech in the string.
     The output is in the form of a dictionary (pos: count).
     '''
-    tokens = nltk.word_tokenize(text.lower())
-    tagged = nltk.pos_tag(tokens)
+    tokens = word_tokenize(text.lower())
+    tagged = pos_tag(tokens)
     pos_count = Counter(tag for word, tag in tagged)
     return pos_count
 
