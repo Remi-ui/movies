@@ -67,6 +67,16 @@ The 4 scripts the program didn't work on:
 
 A summary of the differences between the scripts listed above can be found here: https://docs.google.com/document/d/1rBSFIQtOgTlFwx307YCkwJkS6_ezAEBf5Gh1HtDDLkk/edit?ts=60742cab
 
+<h2>Research question</h2>
+
+<b>Subtitles contain less nouns than their respective scripts<b>
+
+To answer the hypothesis the scripts and subtitles for 10 different movies were POS-tagged. In total subtitles contained 495610 words and the subtitles contained 615655 words.
+The subtitles contained 19147 nouns and the scripts contained 24968 nouns, which means that 3.86% of the subtitles were nouns and 4.06% of the scripts were nouns. It therefore seems that subtitles contain less nouns than the scripts.
+The earlier described hypothesis can therefore be accepted.
+
+Raw data: https://docs.google.com/spreadsheets/d/150YQtX-zg8Dtcm1p6E7EqZWD-_9SMR_BxGRO5A01eA4/edit?usp=sharing 
+
 <h2>Who did what</h2>
 
 <b>Robert</b>
