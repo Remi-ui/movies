@@ -15,8 +15,8 @@ In order to run the program, you also need a few libraries installed. All the re
 
 <h2>How to run the program</h2>
 <ol>
-<li>Have a script file (.srt) and subtitle file (.txt) prepared or use the ones provided in the scripts_subtitles directory</li>
-<li>Run the program in the terminal by typing: python3 user_interface.py -script [SCRIPT_FILE].txt -sub [SUBTITLE_FILE].srt 'python3 aligner.py [SUBTITLE_FILE].srt [SCRIPT_FILE].txt </li>
+<li>Have a script file (.srt) and subtitle file (.txt) prepared in the main directory or move a script and corresponding subtitle file from the scripts_subtitles directory</li>
+<li>Run the program in the terminal by typing: python3 user_interface.py -script [SCRIPT_FILE].txt -sub [SUBTITLE_FILE].srt</li>
 <li>Replace the square brackets and text within the square brackets with the desired name of the script and subtitle</li>
 <li>Follow the instructions provided by the program and put in the number of the desired output and press Enter</li>
 <li>The file with the output can be found in a .csv file in the output folder</li>
