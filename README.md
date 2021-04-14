@@ -10,11 +10,11 @@ In order to run the program, you also need a few libraries installed. All the re
 
 <h2>How to run the program</h2>
 <ol>
-<li>Make sure you have done everything to prepare. (having a .srt and .txt file ready)</li>
-<li>Call the program in your terminal by typing: 'python3 aligner.py [SUBTITLE_FILE].srt [SCRIPT_FILE].txt', replacing the items in square brackets with your own file names. The files we based our results (listed below) on can be found in this repository.</li>
-<li>Follow the instructions given by the terminal interface</li>
-<li></li>
-<li></li>
+<li>Have a script file (.srt) and subtitle file (.txt) prepared or use the ones provided in the scripts_subtitles directory</li>
+<li>Run the program in the terminal by typing: python3 user_interface.py -script [SCRIPT_FILE].txt -sub [SUBTITLE_FILE].srt 'python3 aligner.py [SUBTITLE_FILE].srt [SCRIPT_FILE].txt </li>
+<li>Replace the square brackets and text within the square brackets with the desired name of the script and subtitle</li>
+<li>Follow the instructions provided by the program and put in the number of the desired output and press Enter</li>
+<li>The file with the output can be found in a .csv file in the output folder</li>
 </ol>
 
 <h2>Notable results</h2>
@@ -32,8 +32,10 @@ Accuracy based on results above: 53.75%
 
 If you'd like to reproduce these results follow these steps:
 <ol>
-<li>Open aligner.py and uncomment the last print statement in the select_dialogue function.</li>
-<li>Run the program as normally using the script and subtitle (provided in the scripts_subtitles folder) for the desired movie</li>
+<li>Run the program with the steps provided in "How to run the program"</li>
+<li>For the script and subtitle file use the files provided in the scripts_subtitles folder (the scripts and subtitles for the 4 movies above can be found here)</li>
+<li>Pick option 4</li>
+<li>The output can be found in a .csv file in the output folder</li>
 <li>Compare as you wish! These raw results will be exactly the same as the ones we used for the annotation as well as the raw results below</li>
 </ol>
 
