@@ -12,6 +12,9 @@ import aligner
 
 
 def get_arguments():
+    '''
+    Ensures the file arguments are provided correctly and retrieves the files.
+    '''
     parser = argparse.ArgumentParser(prog="Aligner",
                                      description="This program aligns a movie script and its subtitles.",
                                      usage="Provide a .txt and a .srt file to align the two.")
@@ -27,6 +30,9 @@ def get_arguments():
 
 
 def ask_choice():
+    '''
+    Asks the user what they wish to use the aligner for.
+    '''
     choice = int(input("Possible choices on what to do:\n"
                    "1. Create a .csv file with the timestamps of the subtitles in the script.\n"
                    "2. Create a .csv file with the character names in the subtitles.\n"
@@ -42,16 +48,25 @@ def ask_choice():
 
 
 def create_clean_script(script_list):
+    '''
+    Helper function that returns a cleaned up version of the script list.
+    '''
     return aligner.clean_script_dialogue(script_list)
 
 
 def create_clean_script_norm(cleaned_script):
+    '''
+    Helper function that removes the indexes from the cleaned up script list.
+    '''
     cleaned_script_norm = []
     for item in cleaned_script:
         cleaned_script_norm.append(item[0])
     return cleaned_script_norm
 
 def execute_choice(choice, subtitle_list, script_list):
+    '''
+    Executes the functions of the aligner that were chosen by the user.
+    '''
     cleaned_script = create_clean_script(script_list)
     cleaned_script_norm = create_clean_script_norm(cleaned_script)
     aligned_data = aligner.select_dialogue(subtitle_list, cleaned_script_norm)
@@ -71,7 +86,7 @@ def execute_choice(choice, subtitle_list, script_list):
     elif choice == 4:
         pass
     elif choice == 5:
-        sub_count, script_count = aligner.find_differences(subtitle_list, script_list, cleaned_script_norm)
+        sub_count, script_count = aligner.find_differences(subtitle_list, cleaned_script_norm)
         print("\nSubtitles:")
         for key, value in sub_count.items():
             print("|{0:^10} | {1:^10}|".format(key, value))
