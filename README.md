@@ -69,7 +69,7 @@ A summary of the differences between the scripts listed above can be found here:
 
 <h2>Research question</h2>
 
-<b>Subtitles contain less nouns than their respective scripts<b>
+<b>Subtitles contain less nouns than their respective scripts</b>
 
 To answer the hypothesis the scripts and subtitles for 10 different movies were POS-tagged. In total subtitles contained 495610 words and the subtitles contained 615655 words.
 The subtitles contained 19147 nouns and the scripts contained 24968 nouns, which means that 3.86% of the subtitles were nouns and 4.06% of the scripts were nouns. It therefore seems that subtitles contain less nouns than the scripts.
