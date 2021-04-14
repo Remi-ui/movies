@@ -24,8 +24,6 @@ def get_arguments():
                         help="Provide a .srt file that contains the subtitles to the movie.")
     args = parser.parse_args()
     argv = vars(args)
-    subtitle_list = subtitles.main(argv['Subtitle file'])
-    script_list = scripts.main(argv['Script file'])
     return argv
 
 
@@ -63,6 +61,7 @@ def create_clean_script_norm(cleaned_script):
         cleaned_script_norm.append(item[0])
     return cleaned_script_norm
 
+
 def execute_choice(choice, subtitle_list, script_list):
     '''
     Executes the functions of the aligner that were chosen by the user.
@@ -84,7 +83,9 @@ def execute_choice(choice, subtitle_list, script_list):
             writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL, delimiter='\n')
             writer.writerow(script_list)    
     elif choice == 4:
-        pass
+        matched_dialogue = aligner.select_dialogue(subtitle_list, cleaned_script_norm)
+        for element in matched_dialogue:
+            print('Score:', round(element[0], 3), '\nScript:', element[1], '\nSubtitle:', element[2], '\n')
     elif choice == 5:
         sub_count, script_count = aligner.find_differences(subtitle_list, cleaned_script_norm)
         print("\nSubtitles:")
@@ -93,8 +94,7 @@ def execute_choice(choice, subtitle_list, script_list):
         print("\nScript:")
         for key, value in script_count.items():
             print("|{0:^10} | {1:^10}|".format(key, value))
-    elif choice == 6:
-        pass
+            
 
 def main(argv):
     argv = get_arguments()

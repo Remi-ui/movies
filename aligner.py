@@ -48,9 +48,6 @@ def clean_script_dialogue(script_list):
             # remove metadata
             element = re.sub(r'(\(M\)\s\(.*?\))', r'', element)
             element = element[4:]
-            # there are more than 2 sentences, break them up
-            # (easier to stringmatch with this)
-
             if len(sent_tokenize(element)) > 2:
                 splitted_element = (sent_tokenize(element))
                 for element in splitted_element:
@@ -108,14 +105,12 @@ def default_search_match(element, script_list, i, ratio):
             if algorithims.cosine(element, script_list[i + y]) > best_match:
                 best_match = algorithims.cosine(element, script_list[i + y])
                 best_match_script = script_list[i + y]
-
     if best_match < 0.35:
         best_match, best_match_script = alternative_search(element,
                                                            script_list,
                                                            best_match,
                                                            best_match_script,
                                                            i)
-
     return best_match, best_match_script
 
 
@@ -128,14 +123,9 @@ def select_dialogue(subtitle_list, script_list):
     best_match_script = ""
     results = []
     i = -1
-    # Iterate over the script and subtitles, select only dialogue and
-    # append them to a list
-
     for element in subtitle_list:
         i += 1
         el_list = element
-        # clean HTML 5 markup
-        element = subtitles.clean_item(element)
         element = element[2]
         ratio = len(script_list) / len(subtitle_list)
         if best_match > 0.9 and len(subtitle_list) > 1:
@@ -151,10 +141,7 @@ def select_dialogue(subtitle_list, script_list):
                                                                  script_list,
                                                                  i,
                                                                  ratio)
-
         results.append([best_match, element, best_match_script])
-        # print("Score: ", best_match, "Subtitle: ",
-        #       element, "Script: ", best_match_script)
     return results
 
 
@@ -189,21 +176,11 @@ def find_differences(subtitle_list, cleaned_script_norm):
     the scripts and subtitles using POS tags '''
     subtitle_dialogue = ''
     script_dialogue = ''
-
-    # Creates a single string with all the text for both the subtitles
-    # and the script
     for item in subtitle_list:
         subtitle_dialogue += re.sub(' +', ' ', item[2] + ' ')
     script_dia_list = cleaned_script_norm
     for item in script_dia_list:
         script_dialogue += re.sub(' +', ' ', item + ' ')
-
-    # Prints various similarity scores between the enitire text
-
-    # print('Fuzz ratio:', fuzz.ratio(subtitle_dialogue, script_dialogue))
-    # print('Jellyfish similarity: {:.2}'.format(jellyfish.jaro_winkler_similarity(subtitle_dialogue, script_dialogue)))
-    # print('Cosine similarity: {:.2}'.format(algorithims.cosine(subtitle_dialogue, script_dialogue)))
-    # print('Word count subtitles: {0} Word count script: {1}'.format(len(subtitle_dialogue), len(script_dialogue)))
 
     # Creates dictionaries with POS for subtitles and script
     # Format: {'POS': count}
@@ -231,10 +208,8 @@ def find_differences(subtitle_list, cleaned_script_norm):
     scr_count['adverb'] = scr_pos['RB'] + scr_pos['RBR'] + scr_pos['RBS']
     scr_count['prepos'] = scr_pos['IN']
     scr_count['conj'] = scr_pos['CC']
-    # print(sub_count, '\n', scr_count)
 
     return sub_count, scr_count
-
 
 
 def align_timestamp(cleaned_script, aligned_data, script_list, subtitle_list):
@@ -242,38 +217,10 @@ def align_timestamp(cleaned_script, aligned_data, script_list, subtitle_list):
     i = 0
     for element in aligned_data:
         for element2 in cleaned_script:
-            # print(element2)
             if element2[0] == element[2]:
                 aligned_data[i].append(element2[1])
         i += 1
     for element in aligned_data:
         script_list[element[3]] += "(T) " + str(subtitle_list[0][1])
         subtitle_list.pop(0)
-    # print(script_list)
     return script_list
-
-
-def main(argv):
-    # Execute scripts.py en subtitles.py vanaf hier.
-    check_input(argv)
-    subtitle_list = subtitles.main(sys.argv[1])
-    script_list = scripts.main(sys.argv[2])
-    cleaned_script = clean_script_dialogue(script_list)
-
-    cleaned_script_norm = []
-    for item in cleaned_script:
-        cleaned_script_norm.append(item[0])
-
-    aligned_data = select_dialogue(subtitle_list, cleaned_script_norm)
-    find_differences(subtitle_list, cleaned_script_norm)
-    character_dialogue(subtitle_list,
-                       script_list, cleaned_script_norm,
-                       aligned_data)
-
-    timestamped_script = align_timestamp(cleaned_script,
-                                         aligned_data,
-                                         script_list, subtitle_list)
-
-
-if __name__ == "__main__":
-    main(sys.argv)
