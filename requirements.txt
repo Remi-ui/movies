@@ -1,2 +1,9 @@
+Run the following commands in your Linux/Unix terminal prior to running the program:
+pip3 install jellyfish
+pip3 install nltk
+pip3 install fuzzy-match
 pip3 install fuzzywuzzy
 pip3 install python-Levenshtein
+
+Open your interactive python shell by typing 'python3' and enter the following there:
+nltk.download('averaged_perceptron_tagger')
