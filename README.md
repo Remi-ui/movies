@@ -2,7 +2,12 @@
 
 <h2>About</h2>
 aligner.py is a program that aligns the moviescript with the subtitles by using regex and string comparison. The program first divides each subtitle and each part of the script. It then assigns an appropriate tag to the script lines: metadata (M), character (C), dialogue (D), scene boundary (S) and scene description (N). Then it takes the dialogue from the script and removes its tag again, so that it is ready to be compared. After the preprocessing is done, the program takes the dialogue from both the subtitles and the script and aligns them using string comparison.
-For a more detailed explanation about the code, you can look at the comments in the programs (aligner.py, subtitles.py and scripts.py)
+For a more detailed explanation about the code, you can look at the comments in the programs (aligner.py, subtitles.py and scripts.py).
+<br/>
+<br/>
+<b>Disclaimer:</b> This program can be run on any subtitle and script of a movie however movies where the script and subtitle differ greatly will offer a lower amount of correct matches. This has two main causes:
+<li>If an entire scene isn't present in either the script or subtitles the program can't find correct matches. It constantly tries to align the scripts and subtitle by assuming a high match score means a match (and therefore a moment that the script and subtitles align). If it can't find correct matches for a long time the allignment of the two files can get out of sync and affect the accuracy.</li>
+<li>If two items in the script and subtitles are reversed and the first in the subtitle offers a great match, the second line will not be found. This issue has a lesser effect, but is still noticible. This occurs because the program throws away al earlier looped over items if a good match occured. If it then needs to match with something that occured before that it won't be able to.</li>
 
 <h2>Preparing to run the program</h2>
 Prior to running the program, a few things have to be prepared. First, two files have to be prepared: a SubRip Subtitle file (.srt) containing the subtitles and a standard text file (.txt) containing the script. After this, it is useful to put the files in the same directory, as this will make it easier to call the program.
